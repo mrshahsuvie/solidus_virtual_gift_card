@@ -20,12 +20,18 @@ module SolidusVirtualGiftCard
 
         # TODO: Planning to do more improvement
         if update_success && params[:line_items_attributes]
-          line_items_attributes = params[:line_items_attributes].index_by { |attr| attr[:variant_id] }
+          if params[:line_items_attributes].is_a?(Hash)
+            line_item = ::Spree::LineItem.find_by(id: params[:line_items_attributes][:id])
+            new_quantity = params[:line_items_attributes][:quantity].to_i
+            update_gift_cards(line_item, new_quantity)
+          else
+            line_items_attributes = params[:line_items_attributes].index_by { |attr| attr[:variant_id] }
 
-          order.line_items.where(variant_id: line_items_attributes.keys).find_each do |line_item|
-            attributes = line_items_attributes[line_item.variant_id]
-            new_quantity = attributes[:quantity].to_i if attributes
-            update_gift_cards(line_item, new_quantity) if new_quantity
+            order.line_items.where(variant_id: line_items_attributes.keys).find_each do |line_item|
+              attributes = line_items_attributes[line_item.variant_id]
+              new_quantity = attributes[:quantity].to_i if attributes
+              update_gift_cards(line_item, new_quantity) if new_quantity
+            end
           end
         end
 
