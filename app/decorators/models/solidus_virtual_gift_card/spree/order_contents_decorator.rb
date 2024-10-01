@@ -25,7 +25,11 @@ module SolidusVirtualGiftCard
             new_quantity = params[:line_items_attributes][:quantity].to_i
             update_gift_cards(line_item, new_quantity)
           else
-            line_items_attributes = params[:line_items_attributes].index_by { |attr| attr[:variant_id] }
+            line_items_attributes = if params[:line_items_attributes].is_a?(Array)
+                                      params[:line_items_attributes].index_by { |attr| attr[:variant_id]}
+                                    else
+                                      params[:line_items_attributes].values.index_by { |attr| attr[:variant_id].to_i}
+                                    end
 
             order.line_items.where(variant_id: line_items_attributes.keys).find_each do |line_item|
               attributes = line_items_attributes[line_item.variant_id]
