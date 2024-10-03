@@ -4,7 +4,7 @@ module SolidusVirtualGiftCard
   class Configuration
     attr_accessor :gift_card_email_notifications_enabled
 
-    def initialize(gift_card_email_notifications_enabled: false)
+    def initialize(gift_card_email_notifications_enabled: true)
       @gift_card_email_notifications_enabled = gift_card_email_notifications_enabled
     end
   end
